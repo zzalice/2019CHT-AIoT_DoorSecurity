@@ -57,49 +57,12 @@
             <table class="table table-striped table-sm">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
+                  <th>User Name</th>
+                  <th>Emotion</th>
+                  <th>Time</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>ipsum</td>
-                  <td>dolor</td>
-                  <td>sit</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                  <td>consectetur</td>
-                  <td>adipiscing</td>
-                  <td>elit</td>
-                </tr>
-                <tr>
-                  <td>1,003</td>
-                  <td>Integer</td>
-                  <td>nec</td>
-                  <td>odio</td>
-                  <td>Praesent</td>
-                </tr>
-                <tr>
-                  <td>1,003</td>
-                  <td>Integer</td>
-                  <td>nec</td>
-                  <td>odio</td>
-                  <td>Praesent</td>
-                </tr>
-                <tr>
-                  <td>1,003</td>
-                  <td>Integer</td>
-                  <td>nec</td>
-                  <td>odio</td>
-                  <td>Praesent</td>
-                </tr>
+              <tbody id="tbody">
               </tbody>
             </table>
           </div>
@@ -184,8 +147,44 @@ Highcharts.chart('dot_chart', {
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script>
+    $(document).ready(function () {
+
+      // RESTful
+      $.ajax({
+        async: true,
+        crossDomain: true,
+        url: "https://iot.cht.com.tw/iot/v1/device/18330497711/sensor/user_information/rawdata?start=2019-08-27T09:03:38.054Z",
+        method: "GET",
+        headers: {
+          "CK": "DK0SFX4T1FTMCFKRGS"
+        },
+        success: function (data) {
+          for (var i = 0; i < data.length; i++) {
+            let data_json = JSON.parse(data[i]["value"][0]);
+            $("#tbody").append(
+              "<tr>"+
+                "<td>"+data_json["user_name"]+"</td>"+
+                "<td>"+data_json["emotion"]+"</td>"+
+                "<td>"+data[i]["time"]+"</td>"+
+              "</tr>"
+            );
+          }
+
+    
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert(xhr.responseText + "\n" + xhr.status + "\n" + thrownError);
+        }
+      });
+    
+
+
+    });
+    </script>
   </body>
 </html>
