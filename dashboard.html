@@ -13,11 +13,12 @@
     <script src="https://code.highcharts.com/modules/timeline.js"></script>
 
     <style type="text/css">
-    #dot_chart{
+    #timeline_chart{
       height: 100%;
       width: 100%;
     }
     </style>
+
 
     <title>2019 Cht AIoT</title>
   </head>
@@ -43,7 +44,7 @@
     <div class="container">
       <div class="row">
         <h4 class="mt-2 mx-2">Who Had Entered?</h4>
-        <div id="dot_chart"></div>
+        <div id="timeline_chart"></div>
       </div>
     </div>
 
@@ -75,73 +76,53 @@
 
 
 
+    <script>
+    var timeline_chart = 
+    new Highcharts.chart('timeline_chart', {
+      chart: {
+        zoomType: 'x',
+        type: 'timeline'
+      },
+      xAxis: {
+        type: 'datetime',
+        visible: false
+      },
+      yAxis: {
+        gridLineWidth: 1,
+        title: null,
+        labels: {
+          enabled: false
+        }
+      },
+      legend: {
+        enabled: false
+      },
+      title: {
+        text: null
+      },
+      tooltip: {
+        style: {
+          width: 300
+        }
+      },
+      series: [{
+        dataLabels: {
+          allowOverlap: false,
+          format: '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
+            '{point.x:%d %b %Y}</span><br/>{point.label}'
+        },
+        marker: {
+          symbol: 'circle'
+        },
+        data: [/*{
+          x: Date.UTC(1951, 5, 22),
+          name: 'First dogs in space',
+          label: 'First dogs in space'
+        }*/]
+      }]
+    });
+    </script>
 
-
-
-
-
-
-
-
-
-
-
-<script>
-Highcharts.chart('dot_chart', {
-  chart: {
-    zoomType: 'x',
-    type: 'timeline'
-  },
-  xAxis: {
-    type: 'datetime',
-    visible: false
-  },
-  yAxis: {
-    gridLineWidth: 1,
-    title: null,
-    labels: {
-      enabled: false
-    }
-  },
-  legend: {
-    enabled: false
-  },
-  title: {
-    text: null
-  },
-  tooltip: {
-    style: {
-      width: 300
-    }
-  },
-  series: [{
-    dataLabels: {
-      allowOverlap: false,
-      format: '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
-        '{point.x:%d %b %Y}</span><br/>{point.label}'
-    },
-    marker: {
-      symbol: 'circle'
-    },
-    data: [{
-      x: Date.UTC(1951, 5, 22),
-      name: 'First dogs in space',
-      label: 'First dogs in space',
-      description: "Dezik and Tsygan were the first dogs to make a sub-orbital flight on 22 July 1951. Both dogs were recovered unharmed after travelling to a maximum altitude of 110 km."
-    }, {
-      x: Date.UTC(1957, 9, 4),
-      name: 'First artificial satellite',
-      label: 'First artificial satellite',
-      description: "Sputnik 1 was the first artificial Earth satellite. The Soviet Union launched it into an elliptical low Earth orbit on 4 October 1957, orbiting for three weeks before its batteries died, then silently for two more months before falling back into the atmosphere."
-    }, {
-      x: Date.UTC(1998, 10, 20),
-      name: 'First multinational space station',
-      label: 'First multinational space station',
-      description: "The International Space Station (ISS) is a space station, or a habitable artificial satellite, in low Earth orbit. Its first component was launched into orbit in 1998, with the first long-term residents arriving in November 2000.[7] It has been inhabited continuously since that date."
-    }]
-  }]
-});
-</script>
 
 
 
@@ -169,13 +150,27 @@ Highcharts.chart('dot_chart', {
         success: function (data) {
           for (var i = 0; i < data.length; i++) {
             let value_json = JSON.parse(data[i]["value"][0]);
-            $("#tbody").append(
-              "<tr>"+
-                "<td>"+value_json["user_name"]+"</td>"+
-                "<td>"+value_json["emotion"]+"</td>"+
-                "<td>"+data[i]["time"]+"</td>"+
-              "</tr>"
-            );
+
+            if(value_json["validation"] === "True"){
+
+              // timeline chart
+              let date = new Date(data[i]["time"]);
+              timeline_chart.series[0].addPoint({
+                x: date,
+                label: date.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
+                name: value_json["user_name"]+": "+value_json["emotion"]
+              });
+  
+              // history table
+              $("#tbody").append(
+                "<tr>"+
+                  "<td>"+value_json["user_name"]+"</td>"+
+                  "<td>"+value_json["emotion"]+"</td>"+
+                  "<td>"+ (new Date(data[i]["time"])).toLocaleString() +"</td>"+
+                "</tr>"
+              );
+
+            }
           }
 
     
@@ -191,13 +186,27 @@ Highcharts.chart('dot_chart', {
       socket.on('mqtt', function (data) {
         let data_json = JSON.parse(data["msg"]);
         let value_json = JSON.parse(data_json["value"][0]);
-        $("#tbody").append(
-          "<tr>"+
-            "<td>"+value_json["user_name"]+"</td>"+
-            "<td>"+value_json["emotion"]+"</td>"+
-            "<td>"+data_json["time"]+"</td>"+
-          "</tr>"
-        );
+
+
+        if(value_json["validation"] === "True"){
+
+          // timeline chart
+          let date = new Date(data_json["time"]);
+          timeline_chart.series[0].addPoint({
+            x: date,
+            label: date.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
+            name: value_json["user_name"]+": "+value_json["emotion"]
+          });
+
+          // history table
+          $("#tbody").append(
+            "<tr>"+
+              "<td>"+value_json["user_name"]+"</td>"+
+              "<td>"+value_json["emotion"]+"</td>"+
+              "<td>"+(new Date(data_json["time"])).toLocaleString()+"</td>"+
+            "</tr>"
+          );
+        }
         
       });
 
