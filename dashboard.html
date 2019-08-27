@@ -77,6 +77,14 @@
 
 
     <script>
+    Highcharts.setOptions({
+      global:{
+      timezoneOffset:8,
+      useUTC: false,
+      }
+    });
+
+    
     var timeline_chart = 
     new Highcharts.chart('timeline_chart', {
       chart: {
@@ -121,6 +129,7 @@
         }*/]
       }]
     });
+
     </script>
 
 
