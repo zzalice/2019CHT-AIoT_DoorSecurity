@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>How to consume RESTful Web Service using jQuery</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $.ajax({
+                    async: true,
+                    crossDomain: true,
+                    url: "https://iot.cht.com.tw/iot/v1/device/18330497711/sensor/test/rawdata?start=2019-08-27T04:54:10.052Z",
+                    method: "GET",
+                    headers: {
+                      "CK": "DK0SFX4T1FTMCFKRGS"
+                    },
+                    success: function (data) {
+                        //$("#id").append(data);
+                        console.log(data);
+            
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.responseText + "\n" + xhr.status + "\n" + thrownError);
+                    }
+                });
+            
+            });
+
+
+
+            // var settings = {
+            //   "async": true,
+            //   "crossDomain": true,
+            //   "url": "https://iot.cht.com.tw/iot/v1/device/18330497711/sensor/test/rawdata?start=2019-08-27T04:54:10.052Z",
+            //   "method": "GET",
+            //   "headers": {
+            //     "CK": "DK0SFX4T1FTMCFKRGS"
+            //   }
+            // }
+
+
+            // $.ajax(settings).done(function (response) {
+            //   console.log(response);
+            // });
+        </script>
+    </head>
+    <body>
+        <div>
+            <h3>How to consume RESTful Web Service using jQuery</h3>
+
+            <p id="id">ID: </p>
+            <p id="content">Content: </p>
+
+        </div>
+    </body>
+</html>
