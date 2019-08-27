@@ -151,6 +151,9 @@ Highcharts.chart('dot_chart', {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
+    <!-- Web socket -->
+    <script src="C:\xampp\htdocs\2019CHT-AIoT_DoorSecurity\node\node_modules\socket.io-client\dist\socket.io.js"></script>
+
     <script>
     $(document).ready(function () {
 
@@ -165,11 +168,11 @@ Highcharts.chart('dot_chart', {
         },
         success: function (data) {
           for (var i = 0; i < data.length; i++) {
-            let data_json = JSON.parse(data[i]["value"][0]);
+            let value_json = JSON.parse(data[i]["value"][0]);
             $("#tbody").append(
               "<tr>"+
-                "<td>"+data_json["user_name"]+"</td>"+
-                "<td>"+data_json["emotion"]+"</td>"+
+                "<td>"+value_json["user_name"]+"</td>"+
+                "<td>"+value_json["emotion"]+"</td>"+
                 "<td>"+data[i]["time"]+"</td>"+
               "</tr>"
             );
@@ -182,6 +185,22 @@ Highcharts.chart('dot_chart', {
         }
       });
     
+
+      // web socket
+      var socket = io.connect('http://localhost');
+      socket.on('mqtt', function (data) {
+        let data_json = JSON.parse(data["msg"]);
+        let value_json = JSON.parse(data_json["value"][0]);
+        $("#tbody").append(
+          "<tr>"+
+            "<td>"+value_json["user_name"]+"</td>"+
+            "<td>"+value_json["emotion"]+"</td>"+
+            "<td>"+data_json["time"]+"</td>"+
+          "</tr>"
+        );
+        
+      });
+
 
 
     });
